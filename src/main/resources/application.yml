@@ -2,6 +2,21 @@ server:
   port: 9192
 
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/audit
+    username: audit
+    password: audit
+ # flyway:
+ #   url: jdbc:postgresql://localhost:5432/audit
+ #   username: audit
+ #   password: audit
+ #   baselineOnMigrate: true
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    properties.hibernate:
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQL81Dialect
   cloud:
     stream:
       default:
@@ -17,20 +32,12 @@ spring:
           producer:
             #content-type:
             group: group-1
-            #use-native-encoding: false
-            #configuration:
-            #key.serializer: org.apache.kafka.common.serialization.StringSerializer
-            #  value.serializer: io.cloudevents.kafka.CloudEventSerializer
         recvAuditData:
           destination: audit
           binder: kafka
           consumer:
             #content-type:
             group: group-1
-            #use-native-decoding: false
-            #configuration:
-              #key.serializer: org.apache.kafka.common.serialization.StringSerializer
-              #value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
       kafka:
         binder:
           producer-properties:
@@ -61,4 +68,3 @@ spring:
 logging:
   level:
     root: INFO
-
