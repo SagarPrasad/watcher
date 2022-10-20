@@ -1,0 +1,64 @@
+server:
+  port: 9192
+
+spring:
+  cloud:
+    stream:
+      default:
+        producer:
+          useNativeEncoding: true
+        consumer:
+          useNativeEncoding: true
+      #    function.definition: receiveData
+      bindings:
+        sendAuditData:
+          destination: audit
+          binder: kafka
+          producer:
+            #content-type:
+            group: group-1
+            #use-native-encoding: false
+            #configuration:
+            #key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            #  value.serializer: io.cloudevents.kafka.CloudEventSerializer
+        recvAuditData:
+          destination: audit
+          binder: kafka
+          consumer:
+            #content-type:
+            group: group-1
+            #use-native-decoding: false
+            #configuration:
+              #key.serializer: org.apache.kafka.common.serialization.StringSerializer
+              #value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
+      kafka:
+        binder:
+          producer-properties:
+            client.id:
+            cloudevents:
+              serializer:
+                encoding: STRUCTURED
+                event_format: application/cloudevents+json
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.serializer: io.cloudevents.kafka.CloudEventSerializer
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
+      binders:
+        kafka:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: localhost:9092
+
+  devtools:
+    add-properties: true
+
+logging:
+  level:
+    root: INFO
+
