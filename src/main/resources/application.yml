@@ -61,7 +61,6 @@ spring:
                   kafka:
                     binder:
                       brokers: localhost:9092
-
   devtools:
     add-properties: true
 
