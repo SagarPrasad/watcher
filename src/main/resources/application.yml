@@ -32,11 +32,12 @@ spring:
           producer:
             #content-type:
             group: group-1
-        recvAuditData:
+        consumer-in-0:
           destination: audit
           binder: kafka
           consumer:
             #content-type:
+            #batch-mode: true
             group: group-1
       kafka:
         binder:
@@ -49,6 +50,13 @@ spring:
             key.serializer: org.apache.kafka.common.serialization.StringSerializer
             value.serializer: io.cloudevents.kafka.CloudEventSerializer
           consumer-properties:
+            #fetch:
+              #min.bytes: 10000
+              #max.wait.ms: 10000
+            #max.poll:
+                #records: 100
+                #interval.ms: 10000
+                #https://medium.com/@anupriyakumawat95/consume-messages-in-batch-using-spring-cloud-stream-kafka-binder-d82b0f4a9935
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
       binders:
