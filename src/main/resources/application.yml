@@ -6,11 +6,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/audit
     username: audit
     password: audit
- # flyway:
- #   url: jdbc:postgresql://localhost:5432/audit
- #   username: audit
- #   password: audit
- #   baselineOnMigrate: true
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
@@ -18,60 +13,62 @@ spring:
       format_sql: true
       dialect: org.hibernate.dialect.PostgreSQL81Dialect
   cloud:
+    function.definition: consumer
     stream:
-      default:
-        producer:
-          useNativeEncoding: true
-        consumer:
-          useNativeEncoding: true
-      #    function.definition: receiveData
       bindings:
-        sendAuditData:
+        producer-out-0:
           destination: audit
-          binder: kafka
+          group: audit-producer
           producer:
-            #content-type:
-            group: group-1
+            useNativeEncoding: true
         consumer-in-0:
           destination: audit
-          binder: kafka
+          group: audit-consumer
           consumer:
-            #content-type:
-            #batch-mode: true
-            group: group-1
+            batch-mode: true
+            useNativeDecoding: true
       kafka:
         binder:
-          producer-properties:
-            client.id:
-            cloudevents:
-              serializer:
-                encoding: STRUCTURED
-                event_format: application/cloudevents+json
-            key.serializer: org.apache.kafka.common.serialization.StringSerializer
-            value.serializer: io.cloudevents.kafka.CloudEventSerializer
+          brokers: localhost:9092
           consumer-properties:
-            #fetch:
-              #min.bytes: 10000
-              #max.wait.ms: 10000
-            #max.poll:
-                #records: 100
-                #interval.ms: 10000
-                #https://medium.com/@anupriyakumawat95/consume-messages-in-batch-using-spring-cloud-stream-kafka-binder-d82b0f4a9935
-            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
-      binders:
-        kafka:
-          type: kafka
-          environment:
-            spring:
-              cloud:
-                stream:
-                  kafka:
-                    binder:
-                      brokers: localhost:9092
+            max.poll.records: 5
+            fetch.min.bytes: 10000
+            fetch.max.wait.ms: 20000
+        bindings:
+          producer-out-0:
+            producer:
+              configuration:
+                cloudevents:
+                  serializer:
+                    encoding: STRUCTURED
+                    event_format: application/cloudevents+json
+                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+                value.serializer: com.sagar.audit.watcher.domain.MessageSerializer
+#                value.serializer: io.cloudevents.kafka.CloudEventSerializer
+          consumer-in-0:
+            consumer:
+              configuration:
+                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                value.deserializer: com.sagar.audit.watcher.domain.MessageDeserializer
+#                value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
   devtools:
     add-properties: true
 
 logging:
   level:
     root: INFO
+
+---
+cloud:
+  function.definition: consumer;producer
+  stream:
+    bindings:
+      producer-out-0:
+        destination: audit
+      consumer-in-0:
+        destination: audit
+    kafka:
+      binder:
+        brokers: localhost:9092
+devtools:
+  add-properties: true

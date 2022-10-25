@@ -1,4 +1,4 @@
-package com.sagar.audit.watcher;
+package com.sagar.audit.watcher.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

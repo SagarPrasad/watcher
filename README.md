@@ -16,5 +16,9 @@ Postgres integration - Done
 Profile - based
 Compressed Data
 
+Ref:
+https://blog.avenuecode.com/processing-messages-with-spring-cloud-stream-and-kafka#:~:text=Spring%20Cloud%20Stream%20is%20a,business%20logic%20onto%20message%20brokers.
+
+Multiple module with client sdk / domain / versioning / tenants etc
 
 ```

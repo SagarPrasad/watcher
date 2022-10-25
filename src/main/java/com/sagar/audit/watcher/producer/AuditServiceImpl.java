@@ -1,4 +1,4 @@
-package com.sagar.audit.watcher;
+package com.sagar.audit.watcher.producer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sagar.audit.watcher.domain.AuditMessage;
@@ -6,38 +6,32 @@ import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.data.PojoCloudEventData;
 import java.net.URI;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-@RestController
-public class StreamController {
+@Service
+public class AuditServiceImpl implements AuditService {
+
+  //@Autowired
+  AuditMsgStream auditMsgStream;
 
   @Autowired
   ObjectMapper objectMapper;
 
-  @Autowired
-  StreamBridge streamBridge;
 
-  @PostMapping("/publish")
-  public String postMessage(@RequestBody String msg) {
-    AuditMessage auditMessage = new AuditMessage(UUID.randomUUID().toString(), msg);
+  @Override
+  public boolean sendData(String data) {
+    AuditMessage auditMessage = new AuditMessage("1", data);
     CloudEvent event = CloudEventBuilder.v1()
         .withId("hello")
         .withType("example.kafka")
         .withData("application/json", PojoCloudEventData.wrap(auditMessage, objectMapper::writeValueAsBytes))
         .withSource(URI.create("http://localhost"))
         .build();
-    boolean sent = streamBridge.send("producer-out-0", message(auditMessage));
-    //boolean sent = streamBridge.send("producer-out-0", message(event));
-    return "done";
+    return auditMsgStream.sendMsg().send(message(event));
   }
-
   private static final <T> Message<T> message(T val) {
     return MessageBuilder.withPayload(val).build();
   }

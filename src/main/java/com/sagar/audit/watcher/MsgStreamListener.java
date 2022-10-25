@@ -1,16 +1,12 @@
 package com.sagar.audit.watcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sagar.audit.watcher.domain.AuditMessage;
+import com.sagar.audit.watcher.repo.AuditMessageRepository;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.data.PojoCloudEventData;
-import java.util.List;
 import java.util.Map;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.config.ListenerContainerCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -26,7 +22,7 @@ public class MsgStreamListener {
   @Autowired
   ObjectMapper objectMapper;
 
-  @org.springframework.cloud.stream.annotation.StreamListener(AuditMsgStream.INPUT)
+  //@StreamListener("audit")
   public void handleAuditMsg(@Payload CloudEvent msg, @Headers Map<String, Object> headers) {
     //System.out.println("msg recived count" + msgList.size());
     //msgList.stream().forEach(msg -> {

@@ -1,0 +1,105 @@
+server:
+  port: 9192
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/audit
+    username: audit
+    password: audit
+  # flyway:
+  #   url: jdbc:postgresql://localhost:5432/audit
+  #   username: audit
+  #   password: audit
+  #   baselineOnMigrate: true
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    properties.hibernate:
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQL81Dialect
+  cloud:
+    stream:
+      default:
+        producer:
+          useNativeEncoding: true
+        consumer:
+          useNativeEncoding: true
+      #    function.definition: receiveData
+      bindings:
+        sendAuditData:
+          destination: audit
+          binder: kafka
+          producer:
+            #content-type:
+            group: group-1
+        consumer-in-0:
+          destination: audit
+          binder: kafka
+          consumer:
+            batch-mode: true
+            group: group-1
+      kafka:
+        binder:
+          producer-properties:
+            client.id:
+            cloudevents:
+              serializer:
+                encoding: STRUCTURED
+                event_format: application/cloudevents+json
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.serializer: io.cloudevents.kafka.CloudEventSerializer
+          consumer-properties:
+            #fetch:
+            #min.bytes: 10000
+            #max.wait.ms: 10000
+            #max.poll:
+            #records: 100
+            #interval.ms: 10000
+            #https://medium.com/@anupriyakumawat95/consume-messages-in-batch-using-spring-cloud-stream-kafka-binder-d82b0f4a9935
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
+      binders:
+        kafka:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: localhost:9092
+  devtools:
+    add-properties: true
+
+logging:
+  level:
+    root: INFO
+---
+
+spring:
+  cloud:
+    function:
+      definition: consumer;producer
+    stream:
+      kafka:
+        bindings:
+          producer-out-0:
+            producer:
+              configuration:
+                value.serializer: com.amrut.prabhu.dto.coverters.MessageSerializer
+          consumer-in-0:
+            consumer:
+              configuration:
+                value.deserializer: com.amrut.prabhu.dto.coverters.MessageDeSerializer
+        binder:
+          brokers: localhost:9092
+
+      bindings:
+        producer-out-0:
+          destination : first-topic
+          producer:
+            useNativeEncoding: true # This enables using the custom serializer
+        consumer-in-0:
+          destination : first-topic
+          consumer:
+            use-native-decoding: true # This enables using the custom deserializer
