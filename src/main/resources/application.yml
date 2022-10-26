@@ -3,13 +3,14 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/audit
+    url: jdbc:postgresql://localhost:5432/audit?reWriteBatchedInserts=true
     username: audit
     password: audit
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
     properties.hibernate:
+      jdbc.batch_size: 25
       format_sql: true
       dialect: org.hibernate.dialect.PostgreSQL81Dialect
   cloud:
@@ -33,7 +34,7 @@ spring:
           consumer-properties:
             max.poll.records: 5
             fetch.min.bytes: 10000
-            fetch.max.wait.ms: 20000
+            fetch.max.wait.ms: 10000
         bindings:
           producer-out-0:
             producer:
@@ -43,14 +44,14 @@ spring:
                     encoding: STRUCTURED
                     event_format: application/cloudevents+json
                 key.serializer: org.apache.kafka.common.serialization.StringSerializer
-                value.serializer: com.sagar.audit.watcher.domain.MessageSerializer
-#                value.serializer: io.cloudevents.kafka.CloudEventSerializer
+#                value.serializer: com.sagar.audit.watcher.domain.MessageSerializer
+                value.serializer: io.cloudevents.kafka.CloudEventSerializer
           consumer-in-0:
             consumer:
               configuration:
                 key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-                value.deserializer: com.sagar.audit.watcher.domain.MessageDeserializer
-#                value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
+#                value.deserializer: com.sagar.audit.watcher.domain.MessageDeserializer
+                value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
   devtools:
     add-properties: true
 

@@ -12,11 +12,5 @@ import org.springframework.context.annotation.Configuration;
 //@Configuration
 //@EnableBinding(AuditMsgStream.class)
 public class StreamConfig {
-  public static void main(String[] args) {
-    List<AuditMessage> auditMessages = new ArrayList<>();
-    for (int i=0; i < 10; i++) {
-      auditMessages.add(new AuditMessage(UUID.randomUUID().toString(), i + " Msg"));
-    }
-    System.out.println(auditMessages);
-  }
+
 }

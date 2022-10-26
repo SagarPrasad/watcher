@@ -21,4 +21,7 @@ https://blog.avenuecode.com/processing-messages-with-spring-cloud-stream-and-kaf
 
 Multiple module with client sdk / domain / versioning / tenants etc
 
+
+Change to reactive  / No logs/ Compression of message
+Batch read from Kafka and write to DB
 ```

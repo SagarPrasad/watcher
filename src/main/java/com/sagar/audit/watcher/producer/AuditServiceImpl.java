@@ -6,6 +6,7 @@ import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.data.PojoCloudEventData;
 import java.net.URI;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -23,7 +24,8 @@ public class AuditServiceImpl implements AuditService {
 
   @Override
   public boolean sendData(String data) {
-    AuditMessage auditMessage = new AuditMessage("1", data);
+    AuditMessage auditMessage = new AuditMessage();
+    auditMessage.setName(UUID.randomUUID().toString());
     CloudEvent event = CloudEventBuilder.v1()
         .withId("hello")
         .withType("example.kafka")
