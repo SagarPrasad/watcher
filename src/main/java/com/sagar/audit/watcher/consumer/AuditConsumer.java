@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 public class AuditConsumer {
   @Bean
   public Consumer<List<CloudEvent>> consumer() {
-    String thread = UUID.randomUUID().toString();
     //return auditMessage -> System.out.println("data at loop--" + thread + " -- " + auditMessage);
-    return s -> s.forEach(auditMessage -> System.out.println("data at loop--" + thread + " -- " + auditMessage));
+    return s -> s.forEach(auditMessage -> System.out.println("data at loop--" + auditMessage));
   }
 }

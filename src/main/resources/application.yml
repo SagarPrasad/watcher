@@ -2,17 +2,6 @@ server:
   port: 9192
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/audit?reWriteBatchedInserts=true
-    username: audit
-    password: audit
-  jpa:
-    hibernate.ddl-auto: update
-    show-sql: true
-    properties.hibernate:
-      jdbc.batch_size: 25
-      format_sql: true
-      dialect: org.hibernate.dialect.PostgreSQL81Dialect
   cloud:
     function.definition: consumer
     stream:

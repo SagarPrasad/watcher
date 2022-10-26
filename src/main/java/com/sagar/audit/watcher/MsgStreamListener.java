@@ -2,7 +2,6 @@ package com.sagar.audit.watcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sagar.audit.watcher.domain.AuditMessage;
-import com.sagar.audit.watcher.repo.AuditMessageRepository;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.data.PojoCloudEventData;
 import java.util.Map;
@@ -17,8 +16,6 @@ import static io.cloudevents.core.CloudEventUtils.mapData;
 
 @Component
 public class MsgStreamListener {
-  @Autowired
-  AuditMessageRepository auditMessageRepository;
   @Autowired
   ObjectMapper objectMapper;
 
