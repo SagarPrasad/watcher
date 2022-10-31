@@ -3,10 +3,12 @@ package com.sagar.audit.watcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sagar.audit.watcher.domain.AuditMessage;
 import io.cloudevents.CloudEvent;
+import io.cloudevents.CloudEventData;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.data.PojoCloudEventData;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.function.cloudevent.CloudEventMessageBuilder;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -26,13 +28,16 @@ public class StreamController {
   public String postMessage(@RequestBody String msg) {
     AuditMessage auditMessage = new AuditMessage();
     auditMessage.setName(msg);
-    CloudEvent event = CloudEventBuilder.v1()
+   /* CloudEvent event = CloudEventBuilder.v1()
         .withId("hello")
         .withType("example.kafka")
-        .withData("application/json", PojoCloudEventData.wrap(auditMessage, objectMapper::writeValueAsBytes))
+        .withData("application/json", new CloudEventData())
         .withSource(URI.create("http://localhost"))
-        .build();
-    boolean sent = streamBridge.send("producer-out-0", message(event));
+            .withDataContentType("application/json")
+        .build();*/
+    Message event = CloudEventMessageBuilder.withData(auditMessage).setId("123456")
+				.setSource(URI.create("https://spring.cloudevenets.sample")).build();
+    boolean sent = streamBridge.send("producer-out-0", event);
     return "done";
   }
 

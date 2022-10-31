@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditConsumer {
   @Bean
-  public Consumer<List<CloudEvent>> consumer() {
-    //return auditMessage -> System.out.println("data at loop--" + thread + " -- " + auditMessage);
+  public Consumer<List<AuditMessage>> consumer() {
+    //return auditMessage -> System.out.println("data at loop-- " +  auditMessage);
     return s -> s.forEach(auditMessage -> System.out.println("data at loop--" + auditMessage));
   }
 }

@@ -9,14 +9,16 @@ spring:
         producer-out-0:
           destination: audit
           group: audit-producer
-          producer:
-            useNativeEncoding: true
+          contentType: application/json
+#          producer:
+#            useNativeEncoding: true
         consumer-in-0:
           destination: audit
           group: audit-consumer
+          contentType: application/json
           consumer:
             batch-mode: true
-            useNativeDecoding: true
+#            useNativeDecoding: true
       kafka:
         binder:
           brokers: localhost:9092
@@ -24,23 +26,23 @@ spring:
             max.poll.records: 5
             fetch.min.bytes: 10000
             fetch.max.wait.ms: 10000
-        bindings:
-          producer-out-0:
-            producer:
-              configuration:
-                cloudevents:
-                  serializer:
-                    encoding: STRUCTURED
-                    event_format: application/cloudevents+json
-                key.serializer: org.apache.kafka.common.serialization.StringSerializer
-#                value.serializer: com.sagar.audit.watcher.domain.MessageSerializer
-                value.serializer: io.cloudevents.kafka.CloudEventSerializer
-          consumer-in-0:
-            consumer:
-              configuration:
-                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#                value.deserializer: com.sagar.audit.watcher.domain.MessageDeserializer
-                value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
+#        bindings:
+#          producer-out-0:
+#            producer:
+#              configuration:
+#                cloudevents:
+#                  serializer:
+#                    encoding: STRUCTURED
+#                    event_format: application/cloudevents+json
+#                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+##                value.serializer: com.sagar.audit.watcher.domain.MessageSerializer
+#                value.serializer: io.cloudevents.kafka.CloudEventSerializer
+#          consumer-in-0:
+#            consumer:
+#              configuration:
+#                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+##                value.deserializer: com.sagar.audit.watcher.domain.MessageDeserializer
+#                value.deserializer: io.cloudevents.kafka.CloudEventDeserializer
   devtools:
     add-properties: true
 
