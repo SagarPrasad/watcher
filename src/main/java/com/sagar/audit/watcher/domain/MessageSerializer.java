@@ -17,5 +17,6 @@ public class MessageSerializer implements Serializer<AuditMessage> {
       throw new SerializationException(e);
     }
 
+
   }
 }
