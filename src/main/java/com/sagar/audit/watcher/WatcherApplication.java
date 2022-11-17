@@ -4,6 +4,7 @@ import com.sagar.audit.watcher.domain.AuditMessage;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,5 +23,9 @@ public class WatcherApplication {
 	public Supplier<AuditMessage> producer() {
 		return () -> new AuditMessage(UUID.randomUUID().toString(), "Sagar");
 	}*/
+	@Bean
+	public Function<String, String> uppercase() {
+		return value -> value.toUpperCase();
+	}
 
 }

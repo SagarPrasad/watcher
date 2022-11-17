@@ -27,7 +27,7 @@ public class StreamController {
   @PostMapping("/publish")
   public String postMessage(@RequestBody String msg) {
     AuditMessage auditMessage = new AuditMessage();
-    auditMessage.setName(msg);
+    auditMessage.setBusinessIdentifier(msg);
    /* CloudEvent event = CloudEventBuilder.v1()
         .withId("hello")
         .withType("example.kafka")

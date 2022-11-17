@@ -25,7 +25,7 @@ public class AuditServiceImpl implements AuditService {
   @Override
   public boolean sendData(String data) {
     AuditMessage auditMessage = new AuditMessage();
-    auditMessage.setName(UUID.randomUUID().toString());
+    auditMessage.setBusinessKey(UUID.randomUUID().toString());
     CloudEvent event = CloudEventBuilder.v1()
         .withId("hello")
         .withType("example.kafka")

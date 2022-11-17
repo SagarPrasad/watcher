@@ -24,7 +24,7 @@ public class MsgStreamListener {
     //System.out.println("msg recived count" + msgList.size());
     //msgList.stream().forEach(msg -> {
       PojoCloudEventData<AuditMessage> cloudEventData = mapData(msg, PojoCloudEventDataMapper.from(objectMapper, AuditMessage.class));
-      System.out.println(System.currentTimeMillis() + " -- msg data name " + cloudEventData.getValue().getName());
+      System.out.println(System.currentTimeMillis() + " -- msg data name " + cloudEventData.getValue().getBusinessIdentifier());
       System.out.println(System.currentTimeMillis() + " -- msg data name " + cloudEventData.getValue());
       System.out.println(System.currentTimeMillis() + " -- msg data name " + cloudEventData);
     //});
