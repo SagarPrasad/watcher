@@ -15,8 +15,6 @@ public class MessageSerializer implements Serializer<AuditMessage> {
       return objectMapper.writeValueAsBytes(data);
     } catch (JsonProcessingException e) {
       throw new SerializationException(e);
-    }
-
-
+    }x
   }
 }
