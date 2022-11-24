@@ -1,0 +1,15 @@
+watcher:
+  config: true
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        producer-out-0:
+          #to be overrided
+          destination: audit
+          group: audit-producer
+          contentType: application/json
+      kafka:
+        binder:
+          brokers: localhost:9092
