@@ -1,0 +1,734 @@
+openapi: 3.0.3
+info:
+  title: Fulfillment APIs - OpenAPI 3.0
+  description: |-
+    This is a high level fulfillment object which will be generically used in different forwards and returns flow. It will contain all the objects which will be used to call different downstream and upstream systems and part of it will be stored in the fulfillment services. Other minute details to be added
+    
+    Some useful links:
+    - [Fulfullment Service git repository](https://github.com/swagger-api/swagger-petstore)
+    - [Forward Fulfillment git repoistory](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+     - [Return Fulfillment git repoistory](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+      - [Sharepoint URL](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+    
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://hearld-scm.fulfillment.com/api/v1
+tags:
+  - name: fwdfulfillment
+    description: Everything about your Forward fulfillment
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+paths:
+  /fwdfulfillment/{orderNo}:
+    get:
+      tags:
+        - fwdfulfillment
+      summary: Find fwdfulfillment by Customer Order Number
+      description: Returns a fulfillment Object with complete details
+      operationId: getFwdFulfillmentByOrderId
+      parameters:
+        - name: orderNo
+          in: path
+          description: ID of pet to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful return the object with status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FulfillmentOrder'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/FulfillmentOrder'
+        '400':
+          description: Invalid Order Num supplied
+        '404':
+          description: Order Num not found
+      security:
+        - api_key: []
+
+components:
+  schemas:
+    FulfillmentOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique id to represent the fulfillment request
+        orderNo:
+          type: string
+          example: FNA1300005611
+          description: Customer Order Number
+        tenantId:
+          type: string
+          example: AJIOB2C
+          description: tenant for this fulfillment order
+        createAt:
+          type: string
+          format: date-time
+        orderType:
+          type: string
+          description: Order Type
+          example: forward
+          enum:
+            - forward
+            - return
+            - exchange
+        paymentType:
+            type: string
+            example: COD
+            description: payment mode for the order
+            enum:
+              - COD
+              - PREPAID
+              - NONCOD
+        entryType:
+          type: string
+          example: android
+          description: channel through the order is placed
+          enum:
+            - store
+            - sndroid
+            - iOS
+            - storeFront
+            - callcentre
+            - mobility
+        totalAmount:
+            type: number
+            example: 1000
+            description: order total amount
+        customerName:
+            type: string
+            example: Tanmay
+            description: first name of the customer
+        logisticDetail:
+          type: object
+          properties:
+            carrier:
+              type: string
+              example: SURFACE
+              description: Carrier Type
+              enum:
+                - SURFACE
+                - AIR
+                - WATER
+            deliveryMethod:
+              type: string
+              example: SHIP
+              description: Delivery Method
+              enum:
+                - SHIP
+                - PICKUPFROMSTORE
+            awb:
+              type: string
+              description: AWB number
+              example: 123456789
+            scac:
+              type: string
+              description: SCAC
+              example: SMARTR
+              enum:
+                - SMARTR
+            shipmentWeight:
+              type: number
+              description: weight of the Shipment
+              example: 28.99
+            weightUom:
+              type: string
+              enum:
+                - GRAM
+                - KILOGRAM
+            frieghtTerms:
+              type: string
+              description: Indicates Freight Terms for the line
+              example: NONCOD
+            destinationCityCode:
+              type: string
+              description: DestinationCityCode
+              example: HLG
+            sourceCityCode:
+              type: string
+              description: SourceCityCode
+              example: HLG
+            tat:
+              type: number
+              description: turn around time
+              example: 9
+            routingCode:
+              type: string
+              description: Routing Code
+              example: HLG/HLG-1
+        fulfillmentOrderLines:
+          type: array
+          xml:
+            name: fulfillmentOrderLine
+            wrapped: true
+          description: List of fulfillment Order Lines
+          items:
+            $ref: '#/components/schemas/FulfillmentOrderLine'
+        shipments:
+          type: array
+          xml:
+            name: shipment
+            wrapped: true
+          description: List of Shipments
+          items:
+            $ref: '#/components/schemas/Shipment'
+        statuses:
+          type: array
+          xml:
+            name: statuses
+            wrapped: true
+          description: List of fulfillment Order Lines
+          items:
+            $ref: '#/components/schemas/Statuses'
+        invoices:
+          type: array
+          xml:
+            name: invoices
+            wrapped: true
+          description: List of Invoices
+          items:
+            $ref: '#/components/schemas/Invoice'
+      xml:
+        name: fulfillmentOrder
+    FulfillmentOrderLine:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: unique fulfillment order lines
+        lineNo:
+          type: integer
+          example: 1
+          description: Line Number of the order
+        shipmentLineNo:
+          type: integer
+          example: 1
+          description: Corresponding ShipmentLine no for the orderline
+        qty:
+          type: integer
+          description: Quantity
+        originalqty:
+          type: integer
+          description: Original Quantity
+        shipmentNo:
+          type: string
+          format: uuid
+          example: 200953991
+        node:
+          type: string
+          example: R285
+          description: NodeName
+        fulfillmentNodeType:
+          type: string
+          example: JIT
+          enum: 
+            - JIT
+            - INV
+            - DS
+            - STORE
+        linePriceInfo:
+          type: object
+          properties:
+            listPrice:
+              type: number
+              description: list price of an item
+              example: 100.51
+            retailPrice:
+              type: number
+              description: retail price of an item
+              example: 100.51
+            unitPrice:
+              type: number
+              description: unit price of an item
+              example: 100.51
+            lineTotal:
+              type: number
+              description: Line Total
+              example: 156.89
+          xml:
+            name: linePriceInfo
+        promise:
+          type: object
+          properties:
+            promiseShipDate:
+              type: string
+              format: date-time
+              example: 2022-10-13T15:49:18+05:30
+              description: Ship date of the order
+            carrierCutOffDate:
+              type: string
+              format: date-time
+              example: 2022-10-13T15:49:18+05:30
+              description: Carrier cutoff date the order
+            expectedDeliveryDate:
+              type: string
+              format: date-time
+              example: 2022-10-13T15:49:18+05:30
+              description: Delivery date of the order
+            fulfillmentCutOffDate:
+              type: string
+              format: date-time
+              example: 2022-10-13T15:49:18+05:30
+              description: fulfillment cutoff date of the order
+            deliveryPriorityLevel:
+              type: integer
+              example: 0
+              description: level of priority
+          xml:
+            name: promise
+        item:
+          xml:
+            name: item
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Item'
+        lineCharges:
+          type: array
+          xml:
+            name: lineCharges
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/LineCharge'
+        lineTaxes:
+          type: array
+          xml:
+            name: lineTaxes
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/LineTax'    
+        address:
+          type: array
+          xml:
+            name: addresses
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Address'
+      xml:
+        name: fulfillmentOrderLine
+    Invoice:
+      type: object
+      properties:
+        totalAmount:
+          type: number
+          description: Invoice Total
+          example: 100.67
+        amountCollected:
+          type: number
+          description: Amount Collected
+          example: 50.67
+        totalCharge:
+          type: number
+          description: Total charge amount in the invoice.
+          example: 10.20
+        totalDiscount:
+          type: number
+          description: Total Discount
+          example: 5.25
+        totalTax:
+          type: number
+          description: Total tax amount
+          example: 3.25
+        totalHeadeCharges:
+          type: number
+          description: Toal header charges
+          example: 3.75
+        lineSubTotal:
+          type: number
+          description: Total of extended price for all the lines. This only includes the price * quantity information and excludes line charges and taxes.
+          example: 338.99
+        invoiceNo:
+          type: string
+          format: uuid
+          example: FKAR211000074525
+          description: Invoice number
+        invoicedDate:
+          type: string
+          format: date
+          example: 2022-10-18T15:30:39+05:30
+          description: Invoiced Date
+        headerCharge:
+          type: number
+          description: Header Charge
+          example: 10.20
+        headerDiscount:
+          type: number
+          description: Header Discount
+          example: 5.25
+        headerTax:
+          type: number
+          description: Header tax amount
+          example: 3.25
+        invoiceType:
+          type: string
+          example: SHIPMENT
+          description: Type of Invoice
+          enum:
+            - SHIPMENT
+            - ORDER
+        collectionDetails:
+          type: array
+          xml:
+            name: collectionDetails
+          items:
+            $ref: '#/components/schemas/CollectionDetail'
+      xml:
+        name: invoice
+    CollectionDetail:
+      type: object
+      properties:
+        requestAmount:
+          type: number
+          description: Amount request for the invoice
+          example: 100
+        collectedAmount:
+          type: number
+          description: Amount collected for the invoice
+          example: 100
+        paymentType:
+          type: string
+          description: Payment Type
+          example: BANK_OFFER
+        chargeType:
+          type: string
+          description: Charge Type of the collection
+          example: CHARGE
+    Statuses:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the orderline
+          enum: 
+            - TOCONFIRMED
+            - CAEBooking
+            - TOBECORRECTED
+        qty:
+          type: integer
+          description: status for the qty
+        updatedAt:
+          type: string
+          format: date-time
+      xml:
+        name: statuses
+    LineCharge:
+      type: object
+      properties:
+        chargeAmount:
+          type: number
+          example: 1.29
+          description: discount amount
+        chargeCategory:
+          type: string
+          description: category of the charge
+          example: Shipping
+        chargeName:
+          type: string
+          description: Charge Name
+          example: Shipping
+        chargePerLine:
+          type: number
+          example: 10.02
+          description: charge per line
+        chargePerUnit:
+          type: number
+          example: 13.9
+          description: charge per unit
+      xml:
+        name: lineCharge
+    LineTax:
+      type: object
+      properties:
+        chargeCategory:
+          type: string
+          description: category of the charge
+          example: Shipping
+        chargeName:
+          type: string
+          description: Charge Name
+          example: Shipping
+        taxName:
+          type: string
+          description: Tax name
+          example: CGST
+          enum:
+            - CGST
+            - SGST
+            - IGST
+        amount:
+          type: number
+          description: tac amount
+          example: 5.07
+        taxPercentage:
+          type: number
+          description: Tax percentage
+          example: 9.00
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 460001938003
+        desc:
+          type: string
+          example: someItemDesc
+        class:
+          type: string
+          example: GOOD
+          description: Item / Product class
+          enum: 
+            - GOOD
+            - BAD
+            - UGLY
+        uom:
+          type: string
+          example: EACH
+          description: Unit of Measure
+          enum: 
+            - EACH
+            - PACK
+        colorCode:
+          type: string
+          example: Graphite Grey
+          description: colour of the Item
+        productLine:
+          type: string
+          example: 830904002
+          description: product line of the Item
+        shortDesc:
+          type: string
+          example: some short desc
+        eanNo:
+          type: string 
+          example: 2050000430770
+          description: The ECCN number of an item(ean number).
+        brandName:
+          type: string
+          example: Apple
+        
+        hsnCode:
+          type: string
+          description: Tax product Code of an item(HSN Code)
+          example: 61041300
+        manufactureName:
+          type: string
+          examle: ManufactureName
+          description: Manufacture Name -Source OMS
+        imageURL:
+          type: string
+          examle: Image URL
+          description: PDP Image URL -Source OMS
+        organizationCode:
+          type: string
+          examle: organizationCode
+          description: organizationCode -Source OMS
+        dimension:
+          type: object
+          properties:
+            height:
+              type: number
+              example: 2.16
+              description: height of the Item
+            heightUom:
+              type: string
+              example: CM
+              description: Height Unit of measure
+              enum: 
+                - CM
+                - M
+            length:
+              type: number
+              example: 35.10
+              description: length of the Item
+            lengthUom:
+              type: string
+              example: CM
+              description: Length Unit of measure
+              enum: 
+                - CM
+                - M
+            width:
+              type: number
+              example: 35.10
+              description: Width of the Item
+            widthUom:
+              type: string
+              example: CM
+              description: Width Unit of measure
+              enum: 
+                - CM
+                - M    
+            volume:
+              type: number
+              example: 35.10
+              description: Volume of the Item
+            volumeUom:
+              type: string
+              example: CUCENTIMETER
+              description: Width Unit of measure
+              enum: 
+                - CUCENTIMETER
+                - M    
+            weight:
+              type: number
+              example: 35.10
+              description: Volume of the Item
+            weightUom:
+              type: string
+              example: GRAM
+              description: Width Unit of measure
+              enum: 
+                - GRAM
+                - KILOGRAM  
+            sizeCode:
+              type: string
+              description: size code of the Item
+              example: FreeSize
+      xml:
+        name: item
+    Address:
+      type: object
+      properties:
+        addressId:
+          type: string
+          example: somereference
+        addressType:
+          type: string
+          example: shipTo
+          enum: 
+            - ShipTo
+            - BillTo
+            - Supplier
+        firstName:
+          type: string
+          example: Rama
+        middleName:
+          type: string
+          example: 
+        lastName:
+          type: string
+          example: Kollamsetti
+        address1:
+          type: string
+          example: '94301'
+        address2:
+          type: string
+          example: 437 Lytton
+        address3:
+          type: string
+          example: Palo Alto
+        city:
+          type: string
+          example: CA
+        company:
+          type: string
+          example: '94301'
+        state:
+          type: string
+          example: 437 Lytton
+        country:
+          type: string
+          example: Palo Alto
+        stateCode:
+          type: string
+          example: CA
+        zipCode:
+          type: string
+          example: '560048'
+        commercialAddress:
+          type: boolean
+          example: false
+        phoneNum:
+          type: string
+          example: Palo Alto
+        otherPhoneNum:
+          type: string
+          example: CA
+        gstin:
+          type: string
+          example: '94301'
+      xml:
+        name: address
+    Shipment:
+      type: object
+      properties:
+        shipmentNo:
+          type: string
+          example: '200953991'
+        createAt:
+          type: string
+          format: date-time
+        shipmentType:
+          type: string
+          description: Order Type
+          example: forward
+          enum:
+            - forward
+            - return
+            - exchange
+        priorityCode:
+          type: integer
+        qrCode:
+          type: string
+          example: 'dXBpOi8vcGF5P3Zlcj0wMSZtb2RlPTE1JmN1PUlOUiZwbj1SZWxpYW5jZSBSZXRhaWwgTHRkJnBhPVJFTElBTkNFUkVUQUlMTElNSVRFLjYwNTIxNzE3QGhkZmNiYW5rJnRyPUZLQVIyMTEwMDAwNzQ1MjUmY2F0ZWdvcnk9MDImYW09NDg4LjY4JmdzdGluPTA1QUFBQ0E2NDYwQjJaOSZ0ZD0mZ3N0PTc0LjU0JkdTVEJSS1VQPShDR1NUOjM3LjI3fFNHU1Q6MzcuMjd8SUdTVDowfENFU1M6MCkmSW52b2ljZU5vPUZLQVIyMTEwMDAwNzQ1MjUmSW52b2ljZURhdGU9MjAyMi0xMC0xOCAxNTozMDozOSZ0bj1JTlZPSUNFLUZLQVIyMTEwMDAwNzQ1MjUmcXJNZWRpdW09MDI='
+          description: To be added after verifying
+        amountToBecollected:
+          type: number
+          example: 23.51
+          description: Cod Amount  
+      xml:
+        name: shipment
+    
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  requestBodies:
+    Pet:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FulfillmentOrder'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/FulfillmentOrder'
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
