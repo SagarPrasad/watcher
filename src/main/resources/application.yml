@@ -2,6 +2,22 @@ server:
   port: 9192
 
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/audit?reWriteBatchedInserts=true
+    username: fulfillment
+    password: fulfillment
+  #flyway:
+  #  url: jdbc:postgresql://localhost:5432/audit
+  #  username: fulfillment
+  #  password: fulfillment
+  #  baselineOnMigrate: true
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    properties.hibernate:
+      jdbc.batch_size: 25
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQL81Dialect
   cloud:
     function.definition: consumer
     stream:
