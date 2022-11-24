@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: watcher
+  annotations:
+    param1: test1
+    param2: test2
+spec:
+  type: website
+  lifecycle: experimental
+  owner: sagar
+  providesApis:
+    - watcher-api
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: watcher-api
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: sagar
+  definition:
+    $text: ./openapi.yaml
