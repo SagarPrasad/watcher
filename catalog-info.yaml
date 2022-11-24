@@ -4,7 +4,7 @@ metadata:
   name: watcher
   description: |
     Watcher is an open-source cloud stream Kafka consumer and publisher app.
-    links:
+  links:
     - title: SIT-Website
       url: http://google.com
     - title: Documentation
