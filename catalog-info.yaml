@@ -25,6 +25,17 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: watcher-api
+  description: |
+    Watcher is an open-source cloud stream Kafka consumer and publisher app.
+  links:
+    - title: SIT-Website
+      url: http://google.com
+    - title: Documentation
+      url: https://sharepoint-link.com
+  annotations:
+    github.com/project-slug: SagarPrasad/watcher
+    backstage.io/techdocs-ref: dir:.
+    lighthouse.com/website-url: https://backstage.io
 spec:
   type: openapi
   lifecycle: experimental
